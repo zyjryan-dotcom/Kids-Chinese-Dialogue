@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>亲子中文对话</title>
+    <style>
+        body {
+            text-align: center;
+            font-size: 24px;
+            font-family: "Microsoft YaHei", sans-serif;
+            padding: 20px;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        button {
+            font-size: 22px;
+            margin: 10px;
+            padding: 12px 24px;
+            border-radius: 8px;
+            cursor: pointer;
+        }
+        #result {
+            margin: 20px 0;
+            min-height: 1.5em;
+            font-weight: bold;
+        }
+        .answer-btn {
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+        }
+        .answer-btn:hover {
+            background-color: #45a049;
+        }
+    </style>
+</head>
+<body>
+    <h2 id="question">你饿了吗？</h2>
+    
+    <button id="btn1" class="answer-btn">我饿了</button>
+    <button id="btn2" class="answer-btn">我不饿</button>
+    
+    <p id="result"></p>
+    
+    <button onclick="speak()">🔊 读出来</button>
+    <br><br>
+    <button onclick="next()">下一句</button>
+
+    <script>
+        let data = [
+            { q: "你饿了吗？", a: ["我饿了", "我不饿"] },
+            { q: "你想喝什么？", a: ["我想喝水", "我想喝牛奶"] },
+            { q: "你开心吗？", a: ["我很开心", "我不开心"] }
+        ];
+
+        let index = 0;
+        let selected = "";
+
+        const questionEl = document.getElementById("question");
+        const resultEl = document.getElementById("result");
+        const btn1 = document.getElementById("btn1");
+        const btn2 = document.getElementById("btn2");
+
+        function choose(text) {
+            selected = text;
+            resultEl.innerHTML = `你说：${text}`;
+        }
+
+        function speak() {
+            if (selected === "") return;
+
+            // 停止之前的语音
+            speechSynthesis.cancel();
+
+            let msg = new SpeechSynthesisUtterance(selected);
+            msg.lang = "zh-CN";
+            msg.rate = 0.9;   // 语速稍慢，更适合亲子
+            msg.pitch = 1.1;  // 音调稍高，听起来更可爱
+
+            // 简单错误提示
+            msg.onerror = () => {
+                resultEl.innerHTML += "（朗读失败，可能是浏览器不支持中文语音）";
+            };
+
+            speechSynthesis.speak(msg);
+        }
+
+        function updateQuestion() {
+            questionEl.textContent = data[index].q;
+            
+            // 更新两个回答按钮
+            btn1.textContent = data[index].a[0];
+            btn2.textContent = data[index].a[1];
+
+            // 清除之前的选择
+            resultEl.innerHTML = "";
+            selected = "";
+        }
+
+        function next() {
+            index = (index + 1) % data.length;
+            updateQuestion();
+        }
+
+        // 初始化第一个问题（确保按钮事件正确绑定）
+        function init() {
+            // 使用 addEventListener，更安全且现代
+            btn1.addEventListener("click", () => choose(data[index].a[0]));
+            btn2.addEventListener("click", () => choose(data[index].a[1]));
+
+            updateQuestion();  // 显示第一题
+        }
+
+        // 页面加载完成后初始化
+        window.onload = init;
+    </script>
+</body>
+</html>
