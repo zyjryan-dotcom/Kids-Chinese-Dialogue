@@ -1,0 +1,135 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+  <meta http-equiv="Content-Style-Type" content="text/css">
+  <title></title>
+  <meta name="Generator" content="Cocoa HTML Writer">
+  <meta name="CocoaVersion" content="2575.7">
+  <style type="text/css">
+    p.p1 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Helvetica}
+    p.p2 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Helvetica; min-height: 14.0px}
+  </style>
+</head>
+<body>
+<p class="p1">&lt;!DOCTYPE html&gt;</p>
+<p class="p1">&lt;html lang="zh-CN"&gt;</p>
+<p class="p1">&lt;head&gt;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>&lt;meta charset="UTF-8"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>&lt;meta name="viewport" content="width=device-width, initial-scale=1.0"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>&lt;title&gt;亲子中文对话&lt;/title&gt;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>&lt;style&gt;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>body {</p>
+<p class="p1"><span class="Apple-converted-space">            </span>text-align: center;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>font-size: 24px;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>font-family: "Microsoft YaHei", sans-serif;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>padding: 20px;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>max-width: 800px;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>margin: 0 auto;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>}</p>
+<p class="p1"><span class="Apple-converted-space">        </span>button {</p>
+<p class="p1"><span class="Apple-converted-space">            </span>font-size: 22px;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>margin: 10px;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>padding: 12px 24px;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>border-radius: 8px;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>cursor: pointer;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>}</p>
+<p class="p1"><span class="Apple-converted-space">        </span>#result {</p>
+<p class="p1"><span class="Apple-converted-space">            </span>margin: 20px 0;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>min-height: 1.5em;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>font-weight: bold;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>}</p>
+<p class="p1"><span class="Apple-converted-space">        </span>.answer-btn {</p>
+<p class="p1"><span class="Apple-converted-space">            </span>background-color: #4CAF50;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>color: white;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>border: none;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>}</p>
+<p class="p1"><span class="Apple-converted-space">        </span>.answer-btn:hover {</p>
+<p class="p1"><span class="Apple-converted-space">            </span>background-color: #45a049;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>}</p>
+<p class="p1"><span class="Apple-converted-space">    </span>&lt;/style&gt;</p>
+<p class="p1">&lt;/head&gt;</p>
+<p class="p1">&lt;body&gt;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>&lt;h2 id="question"&gt;你饿了吗？&lt;/h2&gt;</p>
+<p class="p2"><span class="Apple-converted-space">    </span></p>
+<p class="p1"><span class="Apple-converted-space">    </span>&lt;button id="btn1" class="answer-btn"&gt;我饿了&lt;/button&gt;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>&lt;button id="btn2" class="answer-btn"&gt;我不饿&lt;/button&gt;</p>
+<p class="p2"><span class="Apple-converted-space">    </span></p>
+<p class="p1"><span class="Apple-converted-space">    </span>&lt;p id="result"&gt;&lt;/p&gt;</p>
+<p class="p2"><span class="Apple-converted-space">    </span></p>
+<p class="p1"><span class="Apple-converted-space">    </span>&lt;button onclick="speak()"&gt;🔊 读出来&lt;/button&gt;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>&lt;br&gt;&lt;br&gt;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>&lt;button onclick="next()"&gt;下一句&lt;/button&gt;</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">    </span>&lt;script&gt;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>let data = [</p>
+<p class="p1"><span class="Apple-converted-space">            </span>{ q: "你饿了吗？", a: ["我饿了", "我不饿"] },</p>
+<p class="p1"><span class="Apple-converted-space">            </span>{ q: "你想喝什么？", a: ["我想喝水", "我想喝牛奶"] },</p>
+<p class="p1"><span class="Apple-converted-space">            </span>{ q: "你开心吗？", a: ["我很开心", "我不开心"] }</p>
+<p class="p1"><span class="Apple-converted-space">        </span>];</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">        </span>let index = 0;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>let selected = "";</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">        </span>const questionEl = document.getElementById("question");</p>
+<p class="p1"><span class="Apple-converted-space">        </span>const resultEl = document.getElementById("result");</p>
+<p class="p1"><span class="Apple-converted-space">        </span>const btn1 = document.getElementById("btn1");</p>
+<p class="p1"><span class="Apple-converted-space">        </span>const btn2 = document.getElementById("btn2");</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">        </span>function choose(text) {</p>
+<p class="p1"><span class="Apple-converted-space">            </span>selected = text;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>resultEl.innerHTML = `你说：${text}`;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>}</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">        </span>function speak() {</p>
+<p class="p1"><span class="Apple-converted-space">            </span>if (selected === "") return;</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">            </span>// 停止之前的语音</p>
+<p class="p1"><span class="Apple-converted-space">            </span>speechSynthesis.cancel();</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">            </span>let msg = new SpeechSynthesisUtterance(selected);</p>
+<p class="p1"><span class="Apple-converted-space">            </span>msg.lang = "zh-CN";</p>
+<p class="p1"><span class="Apple-converted-space">            </span>msg.rate = 0.9; <span class="Apple-converted-space">  </span>// 语速稍慢，更适合亲子</p>
+<p class="p1"><span class="Apple-converted-space">            </span>msg.pitch = 1.1;<span class="Apple-converted-space">  </span>// 音调稍高，听起来更可爱</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">            </span>// 简单错误提示</p>
+<p class="p1"><span class="Apple-converted-space">            </span>msg.onerror = () =&gt; {</p>
+<p class="p1"><span class="Apple-converted-space">                </span>resultEl.innerHTML += "（朗读失败，可能是浏览器不支持中文语音）";</p>
+<p class="p1"><span class="Apple-converted-space">            </span>};</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">            </span>speechSynthesis.speak(msg);</p>
+<p class="p1"><span class="Apple-converted-space">        </span>}</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">        </span>function updateQuestion() {</p>
+<p class="p1"><span class="Apple-converted-space">            </span>questionEl.textContent = data[index].q;</p>
+<p class="p2"><span class="Apple-converted-space">            </span></p>
+<p class="p1"><span class="Apple-converted-space">            </span>// 更新两个回答按钮</p>
+<p class="p1"><span class="Apple-converted-space">            </span>btn1.textContent = data[index].a[0];</p>
+<p class="p1"><span class="Apple-converted-space">            </span>btn2.textContent = data[index].a[1];</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">            </span>// 清除之前的选择</p>
+<p class="p1"><span class="Apple-converted-space">            </span>resultEl.innerHTML = "";</p>
+<p class="p1"><span class="Apple-converted-space">            </span>selected = "";</p>
+<p class="p1"><span class="Apple-converted-space">        </span>}</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">        </span>function next() {</p>
+<p class="p1"><span class="Apple-converted-space">            </span>index = (index + 1) % data.length;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>updateQuestion();</p>
+<p class="p1"><span class="Apple-converted-space">        </span>}</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">        </span>// 初始化第一个问题（确保按钮事件正确绑定）</p>
+<p class="p1"><span class="Apple-converted-space">        </span>function init() {</p>
+<p class="p1"><span class="Apple-converted-space">            </span>// 使用 addEventListener，更安全且现代</p>
+<p class="p1"><span class="Apple-converted-space">            </span>btn1.addEventListener("click", () =&gt; choose(data[index].a[0]));</p>
+<p class="p1"><span class="Apple-converted-space">            </span>btn2.addEventListener("click", () =&gt; choose(data[index].a[1]));</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">            </span>updateQuestion();<span class="Apple-converted-space">  </span>// 显示第一题</p>
+<p class="p1"><span class="Apple-converted-space">        </span>}</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">        </span>// 页面加载完成后初始化</p>
+<p class="p1"><span class="Apple-converted-space">        </span>window.onload = init;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>&lt;/script&gt;</p>
+<p class="p1">&lt;/body&gt;</p>
+<p class="p1">&lt;/html&gt;</p>
+</body>
+</html>
