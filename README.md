@@ -1,6 +1,3 @@
-[qinzi-dialog.html](https://github.com/user-attachments/files/27490710/qinzi-dialog.html)
-# Kids-Chinese-Dialogue
-亲子中文互动对话
 <!DOCTYPE html>
 <html lang="zh-CN">
 <head>
