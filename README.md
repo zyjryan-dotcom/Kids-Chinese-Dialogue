@@ -281,7 +281,7 @@
 
     let index = 0;
     let selected = "";
-    let isSpeaking = false;
+    let voices = [];
 
     const questionEl = document.getElementById("question");
     const resultEl   = document.getElementById("result");
@@ -289,7 +289,23 @@
     const btn2       = document.getElementById("btn2");
     const progressEl = document.getElementById("progress");
 
-    // Build progress dots
+    // ✅ FIX 1: Load voices properly (async on Chrome)
+    function loadVoices() {
+      voices = window.speechSynthesis.getVoices();
+    }
+    loadVoices();
+    if (window.speechSynthesis.onvoiceschanged !== undefined) {
+      window.speechSynthesis.onvoiceschanged = loadVoices;
+    }
+
+    // ✅ FIX 2: Pick the best Chinese voice available
+    function getChineseVoice() {
+      // Prefer zh-CN, fall back to any zh voice
+      return voices.find(v => v.lang === "zh-CN")
+          || voices.find(v => v.lang.startsWith("zh"))
+          || null;
+    }
+
     function buildProgress() {
       progressEl.innerHTML = "";
       data.forEach((_, i) => {
@@ -317,36 +333,47 @@
       btn1.classList.remove("selected");
       btn2.classList.remove("selected");
       btnEl.classList.add("selected");
-
       resultEl.className = "";
       resultEl.innerHTML = `你说：${text}`;
-
-      // Auto-speak
       speakText(text);
     }
 
     function speakText(text) {
       if (!window.speechSynthesis) {
-        showError("浏览器不支持语音朗读");
+        showError("❌ 浏览器不支持语音，请用 Chrome 或 Edge");
         return;
       }
+
+      // ✅ FIX 3: Cancel + short delay avoids Chrome bug where speech never starts
       speechSynthesis.cancel();
-      const msg = new SpeechSynthesisUtterance(text);
-      msg.lang  = "zh-CN";
-      msg.rate  = 0.85;
-      msg.pitch = 1.1;
-      msg.onerror = () => showError("朗读失败，请检查浏览器是否支持中文语音");
-      msg.onstart = () => {
-        isSpeaking = true;
-        if (!resultEl.querySelector(".speaking-dots") && text === selected) {
-          resultEl.innerHTML = `你说：${text} <span class="speaking-dots"><span></span><span></span><span></span></span>`;
-        }
-      };
-      msg.onend = () => {
-        isSpeaking = false;
-        if (text === selected) resultEl.innerHTML = `你说：${text} ✅`;
-      };
-      speechSynthesis.speak(msg);
+      setTimeout(() => {
+        const msg = new SpeechSynthesisUtterance(text);
+        msg.lang  = "zh-CN";
+        msg.rate  = 0.85;
+        msg.pitch = 1.1;
+
+        // ✅ FIX 4: Assign best available Chinese voice
+        const chineseVoice = getChineseVoice();
+        if (chineseVoice) msg.voice = chineseVoice;
+
+        msg.onerror = (e) => {
+          // Ignore "interrupted" errors (caused by cancel())
+          if (e.error === "interrupted") return;
+          showError("⚠️ 朗读失败，请用 Chrome 或 Edge 浏览器");
+        };
+
+        msg.onstart = () => {
+          if (text === selected) {
+            resultEl.innerHTML = `你说：${text} <span class="speaking-dots"><span></span><span></span><span></span></span>`;
+          }
+        };
+
+        msg.onend = () => {
+          if (text === selected) resultEl.innerHTML = `你说：${text} ✅`;
+        };
+
+        speechSynthesis.speak(msg);
+      }, 100); // 100ms delay fixes Chrome cancellation bug
     }
 
     function speakQuestion() {
