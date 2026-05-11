@@ -3,21 +3,17 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>亲子中文对话</title>
+  <title>中文口语跟读练习</title>
   <link href="https://fonts.googleapis.com/css2?family=Ma+Shan+Zheng&family=Noto+Sans+SC:wght@400;700&display=swap" rel="stylesheet">
   <style>
     :root {
-      --sky: #fef9f0;
+      --sky: #f0f7ff;
       --cloud: #ffffff;
-      --peach: #ffb347;
-      --coral: #ff7043;
-      --mint: #4caf8a;
-      --mint-dark: #388e6a;
-      --lavender: #9c77d4;
-      --lavender-dark: #7b5bbb;
-      --text: #3a2e2e;
-      --soft: #a09090;
-      --card-shadow: 0 8px 32px rgba(60,30,10,0.10);
+      --primary: #4a90e2;
+      --secondary: #67c23a;
+      --text: #2c3e50;
+      --soft: #95a5a6;
+      --card-shadow: 0 12px 40px rgba(0,0,0,0.08);
     }
 
     * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -29,384 +25,212 @@
       display: flex;
       flex-direction: column;
       align-items: center;
-      justify-content: center;
-      padding: 24px 16px;
-      background-image:
-        radial-gradient(circle at 10% 20%, #ffe0b2 0%, transparent 40%),
-        radial-gradient(circle at 85% 80%, #e8f5e9 0%, transparent 40%),
-        radial-gradient(circle at 50% 50%, #fce4ec 0%, transparent 60%);
+      padding: 20px;
     }
 
-    /* Floating decorations */
-    .deco {
-      position: fixed;
-      font-size: 2.2rem;
-      opacity: 0.18;
-      pointer-events: none;
-      animation: float 6s ease-in-out infinite;
-    }
-    .deco:nth-child(1) { top: 8%; left: 5%; animation-delay: 0s; }
-    .deco:nth-child(2) { top: 15%; right: 6%; animation-delay: 1.5s; }
-    .deco:nth-child(3) { bottom: 10%; left: 8%; animation-delay: 3s; }
-    .deco:nth-child(4) { bottom: 18%; right: 5%; animation-delay: 4.5s; }
-    @keyframes float {
-      0%, 100% { transform: translateY(0) rotate(0deg); }
-      50% { transform: translateY(-14px) rotate(8deg); }
-    }
-
-    .card {
-      background: var(--cloud);
-      border-radius: 28px;
-      box-shadow: var(--card-shadow);
-      padding: 36px 32px 32px;
-      max-width: 520px;
+    .container {
+      max-width: 600px;
       width: 100%;
+      margin-top: 40px;
+    }
+
+    header {
       text-align: center;
-      position: relative;
+      margin-bottom: 30px;
     }
 
-    /* Progress bar */
-    .progress-wrap {
-      display: flex;
-      gap: 8px;
-      justify-content: center;
-      margin-bottom: 24px;
-    }
-    .progress-dot {
-      width: 10px; height: 10px;
-      border-radius: 50%;
-      background: #e0d8d0;
-      transition: background 0.3s, transform 0.3s;
-    }
-    .progress-dot.active {
-      background: var(--peach);
-      transform: scale(1.3);
-    }
-    .progress-dot.done {
-      background: var(--mint);
-    }
-
-    /* Question */
-    #question-wrap {
-      margin-bottom: 28px;
-    }
-    #question {
+    h1 {
       font-family: 'Ma Shan Zheng', cursive;
-      font-size: 2.2rem;
-      color: var(--text);
-      line-height: 1.4;
-      display: inline-block;
+      color: var(--primary);
+      font-size: 2.5rem;
+      margin-bottom: 10px;
     }
-    .speak-q-btn {
-      background: none;
-      border: none;
-      cursor: pointer;
-      font-size: 1.4rem;
-      margin-left: 6px;
-      vertical-align: middle;
-      transition: transform 0.2s;
-      padding: 2px 6px;
-      border-radius: 8px;
-    }
-    .speak-q-btn:hover { transform: scale(1.2); background: #fff3e0; }
 
-    /* Answer buttons */
-    .answers {
+    /* 句子卡片样式 */
+    .sentence-card {
+      background: var(--cloud);
+      border-radius: 20px;
+      padding: 25px;
+      margin-bottom: 20px;
+      box-shadow: var(--card-shadow);
+      transition: transform 0.2s;
+      cursor: pointer;
+      position: relative;
+      border: 2px solid transparent;
       display: flex;
       flex-direction: column;
-      gap: 14px;
-      margin-bottom: 24px;
+      gap: 15px;
     }
-    .answer-btn {
+
+    .sentence-card:hover {
+      transform: translateY(-5px);
+      border-color: #d1e4fb;
+    }
+
+    .sentence-card:active {
+      transform: scale(0.98);
+    }
+
+    /* 角色标签 */
+    .role {
+      font-size: 0.85rem;
+      font-weight: bold;
+      padding: 4px 12px;
+      border-radius: 20px;
+      width: fit-content;
+    }
+    .role-q { background: #e3f2fd; color: #1976d2; }
+    .role-a { background: #f1f8e9; color: #388e3c; }
+
+    /* 文字内容 */
+    .content {
       font-family: 'Ma Shan Zheng', cursive;
-      font-size: 1.55rem;
-      padding: 14px 24px;
-      border-radius: 16px;
-      border: 2.5px solid transparent;
-      cursor: pointer;
-      transition: all 0.22s cubic-bezier(.4,0,.2,1);
-      position: relative;
-      overflow: hidden;
-      background: #f7f2ec;
+      font-size: 1.8rem;
       color: var(--text);
-    }
-    .answer-btn::after {
-      content: '';
-      position: absolute;
-      inset: 0;
-      background: rgba(255,255,255,0.35);
-      opacity: 0;
-      transition: opacity 0.2s;
-    }
-    .answer-btn:hover { transform: translateY(-3px); box-shadow: 0 6px 18px rgba(0,0,0,0.10); }
-    .answer-btn:hover::after { opacity: 1; }
-    .answer-btn.selected {
-      background: var(--mint);
-      color: white;
-      border-color: var(--mint-dark);
-      transform: scale(1.04);
-      box-shadow: 0 6px 24px rgba(76,175,138,0.35);
-    }
-    .answer-btn:nth-child(2) { }
-    .answer-btn:nth-child(2).selected {
-      background: var(--lavender);
-      border-color: var(--lavender-dark);
-      box-shadow: 0 6px 24px rgba(156,119,212,0.35);
-    }
-
-    /* Result */
-    #result {
-      min-height: 2em;
-      font-size: 1.15rem;
-      color: var(--mint-dark);
-      font-weight: 700;
-      margin-bottom: 20px;
-      transition: all 0.3s;
-      animation: fadeIn 0.35s;
-    }
-    #result.error { color: var(--coral); }
-    @keyframes fadeIn {
-      from { opacity: 0; transform: translateY(6px); }
-      to { opacity: 1; transform: translateY(0); }
-    }
-
-    /* Control buttons */
-    .controls {
-      display: flex;
-      gap: 12px;
-      justify-content: center;
-      flex-wrap: wrap;
-    }
-    .ctrl-btn {
-      font-family: 'Noto Sans SC', sans-serif;
-      font-size: 1rem;
-      font-weight: 700;
-      padding: 10px 22px;
-      border-radius: 12px;
-      border: none;
-      cursor: pointer;
-      transition: all 0.2s;
       display: flex;
       align-items: center;
-      gap: 6px;
+      justify-content: space-between;
     }
-    .ctrl-btn:hover { transform: translateY(-2px); }
-    .btn-speak {
-      background: #fff3e0;
-      color: #e65100;
-      box-shadow: 0 2px 8px rgba(230,81,0,0.12);
-    }
-    .btn-speak:hover { background: #ffe0b2; }
-    .btn-next {
-      background: linear-gradient(135deg, var(--peach), var(--coral));
-      color: white;
-      box-shadow: 0 4px 14px rgba(255,112,67,0.30);
-    }
-    .btn-next:hover { box-shadow: 0 6px 20px rgba(255,112,67,0.45); }
 
-    /* Speaking animation */
-    .speaking-dots {
-      display: inline-flex;
-      gap: 4px;
-      vertical-align: middle;
-      margin-left: 6px;
+    .icon-play {
+      font-size: 1.5rem;
+      opacity: 0.3;
+      transition: opacity 0.2s;
     }
-    .speaking-dots span {
-      width: 6px; height: 6px;
-      border-radius: 50%;
-      background: var(--mint);
-      animation: pulse 0.8s ease-in-out infinite;
+
+    .sentence-card:hover .icon-play {
+      opacity: 1;
     }
-    .speaking-dots span:nth-child(2) { animation-delay: 0.2s; }
-    .speaking-dots span:nth-child(3) { animation-delay: 0.4s; }
+
+    /* 正在朗读的状态 */
+    .reading {
+      border-color: var(--primary) !important;
+      background: #f0f7ff;
+    }
+
+    .reading .icon-play {
+      color: var(--primary);
+      opacity: 1;
+      animation: pulse 1s infinite;
+    }
+
     @keyframes pulse {
-      0%, 100% { transform: scaleY(1); }
-      50% { transform: scaleY(2); }
+      0% { transform: scale(1); }
+      50% { transform: scale(1.2); }
+      100% { transform: scale(1); }
     }
 
     footer {
-      margin-top: 20px;
-      font-size: 0.8rem;
+      text-align: center;
+      margin-top: 40px;
       color: var(--soft);
+      font-size: 0.9rem;
+    }
+
+    /* 装饰物 */
+    .deco {
+      position: fixed;
+      font-size: 2rem;
+      z-index: -1;
+      opacity: 0.2;
     }
   </style>
 </head>
 <body>
 
-  <!-- Floating decorations -->
-  <div class="deco">🌸</div>
-  <div class="deco">⭐</div>
-  <div class="deco">🐼</div>
-  <div class="deco">🌈</div>
+  <div class="deco" style="top: 10%; left: 10%;">🍎</div>
+  <div class="deco" style="top: 20%; right: 15%;">🦒</div>
+  <div class="deco" style="bottom: 15%; left: 12%;">🎨</div>
 
-  <div class="card">
+  <div class="container">
+    <header>
+      <h1>跟我学中文</h1>
+      <p>点击下方卡片，跟着老师读一读</p>
+    </header>
 
-    <!-- Progress dots -->
-    <div class="progress-wrap" id="progress"></div>
-
-    <!-- Question -->
-    <div id="question-wrap">
-      <span id="question"></span>
-      <button class="speak-q-btn" onclick="speakQuestion()" title="读问题">🔊</button>
+    <div id="practice-list">
+      <!-- 句子会通过 JS 动态生成 -->
     </div>
 
-    <!-- Answer buttons -->
-    <div class="answers">
-      <button id="btn1" class="answer-btn"></button>
-      <button id="btn2" class="answer-btn"></button>
-    </div>
-
-    <!-- Result text -->
-    <p id="result"></p>
-
-    <!-- Controls -->
-    <div class="controls">
-      <button class="ctrl-btn btn-speak" onclick="speakSelected()">🔊 再读一遍</button>
-      <button class="ctrl-btn btn-next" onclick="next()">下一句 →</button>
-    </div>
-
+    <footer>
+      ✨ 提示：建议使用 Chrome 或 Safari 浏览器以获得最佳语音体验
+    </footer>
   </div>
 
-  <footer>点击答案 → 自动朗读 ✨</footer>
-
   <script>
-    const data = [
-      { q: "你饿了吗？",       a: ["我饿了",   "我不饿"]   },
-      { q: "你想喝什么？",     a: ["我想喝水", "我想喝牛奶"] },
-      { q: "你开心吗？",       a: ["我很开心", "我不开心"] },
-      { q: "你叫什么名字？",   a: ["我叫小明", "我叫小红"] },
-      { q: "你几岁了？",       a: ["我三岁了", "我五岁了"] },
-      { q: "你喜欢吃什么？",   a: ["我喜欢吃苹果", "我喜欢吃饺子"] },
+    // 学习内容数据
+    const lessonData = [
+      { text: "你饿了吗？", role: "问" },
+      { text: "我饿了，我想吃苹果。", role: "答" },
+      { text: "你想喝什么？", role: "问" },
+      { text: "我想喝牛奶。", role: "答" },
+      { text: "你叫什么名字？", role: "问" },
+      { text: "我叫小明，很高兴认识你。", role: "答" },
+      { text: "今天天气怎么样？", role: "问" },
+      { text: "今天是晴天，阳光很好。", role: "答" }
     ];
 
-    let index = 0;
-    let selected = "";
-    let voices = [];
+    const listEl = document.getElementById('practice-list');
+    let synth = window.speechSynthesis;
+    let currentUtterance = null;
 
-    const questionEl = document.getElementById("question");
-    const resultEl   = document.getElementById("result");
-    const btn1       = document.getElementById("btn1");
-    const btn2       = document.getElementById("btn2");
-    const progressEl = document.getElementById("progress");
-
-    // ✅ FIX 1: Load voices properly (async on Chrome)
-    function loadVoices() {
-      voices = window.speechSynthesis.getVoices();
-    }
-    loadVoices();
-    if (window.speechSynthesis.onvoiceschanged !== undefined) {
-      window.speechSynthesis.onvoiceschanged = loadVoices;
-    }
-
-    // ✅ FIX 2: Pick the best Chinese voice available
-    function getChineseVoice() {
-      // Prefer zh-CN, fall back to any zh voice
-      return voices.find(v => v.lang === "zh-CN")
-          || voices.find(v => v.lang.startsWith("zh"))
-          || null;
-    }
-
-    function buildProgress() {
-      progressEl.innerHTML = "";
-      data.forEach((_, i) => {
-        const dot = document.createElement("div");
-        dot.className = "progress-dot" + (i === index ? " active" : (i < index ? " done" : ""));
-        progressEl.appendChild(dot);
+    // 初始化页面
+    function init() {
+      lessonData.forEach((item, index) => {
+        const card = document.createElement('div');
+        card.className = 'sentence-card';
+        card.innerHTML = `
+          <div class="role ${item.role === '问' ? 'role-q' : 'role-a'}">${item.role}</div>
+          <div class="content">
+            <span>${item.text}</span>
+            <span class="icon-play">🔊</span>
+          </div>
+        `;
+        
+        card.onclick = () => speak(item.text, card);
+        listEl.appendChild(card);
       });
     }
 
-    function updateQuestion() {
-      const item = data[index];
-      questionEl.textContent = item.q;
-      btn1.textContent = item.a[0];
-      btn2.textContent = item.a[1];
-      btn1.classList.remove("selected");
-      btn2.classList.remove("selected");
-      resultEl.textContent = "";
-      resultEl.className = "";
-      selected = "";
-      buildProgress();
-    }
-
-    function choose(text, btnEl) {
-      selected = text;
-      btn1.classList.remove("selected");
-      btn2.classList.remove("selected");
-      btnEl.classList.add("selected");
-      resultEl.className = "";
-      resultEl.innerHTML = `你说：${text}`;
-      speakText(text);
-    }
-
-    function speakText(text) {
-      if (!window.speechSynthesis) {
-        showError("❌ 浏览器不支持语音，请用 Chrome 或 Edge");
-        return;
+    // 朗读功能
+    function speak(text, element) {
+      // 如果正在读，先停止
+      if (synth.speaking) {
+        synth.cancel();
+        document.querySelectorAll('.sentence-card').forEach(c => c.classList.remove('reading'));
       }
 
-      // ✅ FIX 3: Cancel + short delay avoids Chrome bug where speech never starts
-      speechSynthesis.cancel();
-      setTimeout(() => {
-        const msg = new SpeechSynthesisUtterance(text);
-        msg.lang  = "zh-CN";
-        msg.rate  = 0.85;
-        msg.pitch = 1.1;
+      const msg = new SpeechSynthesisUtterance(text);
+      msg.lang = 'zh-CN';
+      msg.rate = 0.8; // 语速稍慢，方便学生跟读
+      msg.pitch = 1.1;
 
-        // ✅ FIX 4: Assign best available Chinese voice
-        const chineseVoice = getChineseVoice();
-        if (chineseVoice) msg.voice = chineseVoice;
+      // 自动选择最佳中文语音包
+      const voices = synth.getVoices();
+      const chineseVoice = voices.find(v => v.lang === 'zh-CN' || v.lang.includes('zh'));
+      if (chineseVoice) msg.voice = chineseVoice;
 
-        msg.onerror = (e) => {
-          // Ignore "interrupted" errors (caused by cancel())
-          if (e.error === "interrupted") return;
-          showError("⚠️ 朗读失败，请用 Chrome 或 Edge 浏览器");
-        };
+      msg.onstart = () => {
+        element.classList.add('reading');
+      };
 
-        msg.onstart = () => {
-          if (text === selected) {
-            resultEl.innerHTML = `你说：${text} <span class="speaking-dots"><span></span><span></span><span></span></span>`;
-          }
-        };
+      msg.onend = () => {
+        element.classList.remove('reading');
+      };
 
-        msg.onend = () => {
-          if (text === selected) resultEl.innerHTML = `你说：${text} ✅`;
-        };
+      msg.onerror = () => {
+        element.classList.remove('reading');
+      };
 
-        speechSynthesis.speak(msg);
-      }, 100); // 100ms delay fixes Chrome cancellation bug
+      synth.speak(msg);
     }
 
-    function speakQuestion() {
-      speakText(data[index].q);
+    // 解决部分浏览器语音包异步加载的问题
+    if (speechSynthesis.onvoiceschanged !== undefined) {
+      speechSynthesis.onvoiceschanged = () => synth.getVoices();
     }
 
-    function speakSelected() {
-      if (!selected) {
-        resultEl.className = "error";
-        resultEl.textContent = "请先选择一个答案 👆";
-        return;
-      }
-      speakText(selected);
-    }
-
-    function showError(msg) {
-      resultEl.className = "error";
-      resultEl.textContent = msg;
-    }
-
-    function next() {
-      speechSynthesis.cancel();
-      index = (index + 1) % data.length;
-      updateQuestion();
-    }
-
-    function init() {
-      btn1.addEventListener("click", () => choose(data[index].a[0], btn1));
-      btn2.addEventListener("click", () => choose(data[index].a[1], btn2));
-      updateQuestion();
-    }
-
-    window.onload = init;
+    init();
   </script>
 </body>
 </html>
