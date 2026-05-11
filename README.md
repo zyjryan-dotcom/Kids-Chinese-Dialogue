@@ -1,236 +1,123 @@
 <!DOCTYPE html>
 <html lang="zh-CN">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>中文口语跟读练习</title>
-  <link href="https://fonts.googleapis.com/css2?family=Ma+Shan+Zheng&family=Noto+Sans+SC:wght@400;700&display=swap" rel="stylesheet">
-  <style>
-    :root {
-      --sky: #f0f7ff;
-      --cloud: #ffffff;
-      --primary: #4a90e2;
-      --secondary: #67c23a;
-      --text: #2c3e50;
-      --soft: #95a5a6;
-      --card-shadow: 0 12px 40px rgba(0,0,0,0.08);
-    }
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>中文跟读小程序 - 修复版</title>
+    <link href="https://fonts.googleapis.com/css2?family=Ma+Shan+Zheng&family=Noto+Sans+SC:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --sky: #f0f7ff;
+            --primary: #4a90e2;
+            --text: #2c3e50;
+        }
+        body { background: var(--sky); font-family: 'Noto Sans SC', sans-serif; display: flex; flex-direction: column; align-items: center; padding: 20px; }
+        .container { max-width: 500px; width: 100%; }
+        
+        /* 引导点击层 */
+        #overlay {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(74, 144, 226, 0.95);
+            display: flex; flex-direction: column; justify-content: center; align-items: center;
+            z-index: 100; color: white; cursor: pointer; text-align: center;
+        }
 
-    * { box-sizing: border-box; margin: 0; padding: 0; }
-
-    body {
-      background: var(--sky);
-      font-family: 'Noto Sans SC', sans-serif;
-      min-height: 100vh;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      padding: 20px;
-    }
-
-    .container {
-      max-width: 600px;
-      width: 100%;
-      margin-top: 40px;
-    }
-
-    header {
-      text-align: center;
-      margin-bottom: 30px;
-    }
-
-    h1 {
-      font-family: 'Ma Shan Zheng', cursive;
-      color: var(--primary);
-      font-size: 2.5rem;
-      margin-bottom: 10px;
-    }
-
-    /* 句子卡片样式 */
-    .sentence-card {
-      background: var(--cloud);
-      border-radius: 20px;
-      padding: 25px;
-      margin-bottom: 20px;
-      box-shadow: var(--card-shadow);
-      transition: transform 0.2s;
-      cursor: pointer;
-      position: relative;
-      border: 2px solid transparent;
-      display: flex;
-      flex-direction: column;
-      gap: 15px;
-    }
-
-    .sentence-card:hover {
-      transform: translateY(-5px);
-      border-color: #d1e4fb;
-    }
-
-    .sentence-card:active {
-      transform: scale(0.98);
-    }
-
-    /* 角色标签 */
-    .role {
-      font-size: 0.85rem;
-      font-weight: bold;
-      padding: 4px 12px;
-      border-radius: 20px;
-      width: fit-content;
-    }
-    .role-q { background: #e3f2fd; color: #1976d2; }
-    .role-a { background: #f1f8e9; color: #388e3c; }
-
-    /* 文字内容 */
-    .content {
-      font-family: 'Ma Shan Zheng', cursive;
-      font-size: 1.8rem;
-      color: var(--text);
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-    }
-
-    .icon-play {
-      font-size: 1.5rem;
-      opacity: 0.3;
-      transition: opacity 0.2s;
-    }
-
-    .sentence-card:hover .icon-play {
-      opacity: 1;
-    }
-
-    /* 正在朗读的状态 */
-    .reading {
-      border-color: var(--primary) !important;
-      background: #f0f7ff;
-    }
-
-    .reading .icon-play {
-      color: var(--primary);
-      opacity: 1;
-      animation: pulse 1s infinite;
-    }
-
-    @keyframes pulse {
-      0% { transform: scale(1); }
-      50% { transform: scale(1.2); }
-      100% { transform: scale(1); }
-    }
-
-    footer {
-      text-align: center;
-      margin-top: 40px;
-      color: var(--soft);
-      font-size: 0.9rem;
-    }
-
-    /* 装饰物 */
-    .deco {
-      position: fixed;
-      font-size: 2rem;
-      z-index: -1;
-      opacity: 0.2;
-    }
-  </style>
+        .sentence-card {
+            background: white; border-radius: 15px; padding: 20px; margin-bottom: 15px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.05); cursor: pointer;
+            border: 2px solid transparent; transition: all 0.2s;
+        }
+        .sentence-card:active { transform: scale(0.98); }
+        .reading { border-color: var(--primary); background: #eef6ff; }
+        .role { font-size: 0.8rem; font-weight: bold; margin-bottom: 5px; color: var(--primary); }
+        .text { font-family: 'Ma Shan Zheng', cursive; font-size: 1.6rem; color: var(--text); }
+        .status-dot { display: inline-block; width: 8px; height: 8px; background: #ddd; border-radius: 50%; margin-left: 10px; }
+        .reading .status-dot { background: #4a90e2; animation: blink 0.8s infinite; }
+        @keyframes blink { 50% { opacity: 0; } }
+    </style>
 </head>
 <body>
 
-  <div class="deco" style="top: 10%; left: 10%;">🍎</div>
-  <div class="deco" style="top: 20%; right: 15%;">🦒</div>
-  <div class="deco" style="bottom: 15%; left: 12%;">🎨</div>
-
-  <div class="container">
-    <header>
-      <h1>跟我学中文</h1>
-      <p>点击下方卡片，跟着老师读一读</p>
-    </header>
-
-    <div id="practice-list">
-      <!-- 句子会通过 JS 动态生成 -->
+    <!-- 解决浏览器不让自动发声的遮罩层 -->
+    <div id="overlay" onclick="startApp()">
+        <h1 style="font-size: 3rem;">👋</h1>
+        <p style="font-size: 1.2rem;">点击屏幕开启学习之旅</p>
+        <span style="font-size: 0.8rem; margin-top: 10px; opacity: 0.8;">(这是为了激活浏览器的语音功能)</span>
     </div>
 
-    <footer>
-      ✨ 提示：建议使用 Chrome 或 Safari 浏览器以获得最佳语音体验
-    </footer>
-  </div>
+    <div class="container">
+        <header style="text-align: center; margin-bottom: 20px;">
+            <h2 style="color: var(--primary); font-family: 'Ma Shan Zheng';">点击句子跟读</h2>
+        </header>
+        <div id="list"></div>
+    </div>
 
-  <script>
-    // 学习内容数据
-    const lessonData = [
-      { text: "你饿了吗？", role: "问" },
-      { text: "我饿了，我想吃苹果。", role: "答" },
-      { text: "你想喝什么？", role: "问" },
-      { text: "我想喝牛奶。", role: "答" },
-      { text: "你叫什么名字？", role: "问" },
-      { text: "我叫小明，很高兴认识你。", role: "答" },
-      { text: "今天天气怎么样？", role: "问" },
-      { text: "今天是晴天，阳光很好。", role: "答" }
-    ];
+    <script>
+        const data = [
+            { r: "问", t: "你饿了吗？" },
+            { r: "答", t: "我饿了，我想吃苹果。" },
+            { r: "问", t: "你想喝什么？" },
+            { r: "答", t: "我想喝牛奶。" },
+            { r: "问", t: "你叫什么名字？" },
+            { r: "答", t: "我叫小明。" }
+        ];
 
-    const listEl = document.getElementById('practice-list');
-    let synth = window.speechSynthesis;
-    let currentUtterance = null;
+        let synth = window.speechSynthesis;
+        let voicesReady = false;
 
-    // 初始化页面
-    function init() {
-      lessonData.forEach((item, index) => {
-        const card = document.createElement('div');
-        card.className = 'sentence-card';
-        card.innerHTML = `
-          <div class="role ${item.role === '问' ? 'role-q' : 'role-a'}">${item.role}</div>
-          <div class="content">
-            <span>${item.text}</span>
-            <span class="icon-play">🔊</span>
-          </div>
-        `;
-        
-        card.onclick = () => speak(item.text, card);
-        listEl.appendChild(card);
-      });
-    }
+        // 核心修复：预加载语音库
+        function loadVoices() {
+            synth.getVoices();
+            voicesReady = true;
+        }
+        if (speechSynthesis.onvoiceschanged !== undefined) {
+            speechSynthesis.onvoiceschanged = loadVoices;
+        }
 
-    // 朗读功能
-    function speak(text, element) {
-      // 如果正在读，先停止
-      if (synth.speaking) {
-        synth.cancel();
-        document.querySelectorAll('.sentence-card').forEach(c => c.classList.remove('reading'));
-      }
+        function startApp() {
+            // 用户点击后，隐藏遮罩并尝试播放一个空声音来“解锁”语音权限
+            document.getElementById('overlay').style.display = 'none';
+            const silence = new SpeechSynthesisUtterance("");
+            synth.speak(silence);
+            renderList();
+        }
 
-      const msg = new SpeechSynthesisUtterance(text);
-      msg.lang = 'zh-CN';
-      msg.rate = 0.8; // 语速稍慢，方便学生跟读
-      msg.pitch = 1.1;
+        function renderList() {
+            const list = document.getElementById('list');
+            data.forEach(item => {
+                const card = document.createElement('div');
+                card.className = 'sentence-card';
+                card.innerHTML = `
+                    <div class="role">${item.r}</div>
+                    <div class="text">${item.t}<span class="status-dot"></span></div>
+                `;
+                card.onclick = () => speak(item.t, card);
+                list.appendChild(card);
+            });
+        }
 
-      // 自动选择最佳中文语音包
-      const voices = synth.getVoices();
-      const chineseVoice = voices.find(v => v.lang === 'zh-CN' || v.lang.includes('zh'));
-      if (chineseVoice) msg.voice = chineseVoice;
+        function speak(text, el) {
+            // 停止当前所有声音
+            synth.cancel();
 
-      msg.onstart = () => {
-        element.classList.add('reading');
-      };
+            const utterance = new SpeechSynthesisUtterance(text);
+            utterance.lang = 'zh-CN';
+            utterance.rate = 0.8; 
 
-      msg.onend = () => {
-        element.classList.remove('reading');
-      };
+            // 针对部分浏览器（如电脑版 Chrome）寻找最佳中文男/女声
+            const voices = synth.getVoices();
+            const preferredVoice = voices.find(v => v.name.includes("Xiaoxiao") || v.name.includes("Huihui") || v.lang === "zh-CN");
+            if (preferredVoice) utterance.voice = preferredVoice;
 
-      msg.onerror = () => {
-        element.classList.remove('reading');
-      };
+            utterance.onstart = () => el.classList.add('reading');
+            utterance.onend = () => el.classList.remove('reading');
+            utterance.onerror = () => el.classList.remove('reading');
 
-      synth.speak(msg);
-    }
+            synth.speak(utterance);
+        }
 
-    // 解决部分浏览器语音包异步加载的问题
-    if (speechSynthesis.onvoiceschanged !== undefined) {
-      speechSynthesis.onvoiceschanged = () => synth.getVoices();
-    }
-
-    init();
-  </script>
+        // 初始化加载一次
+        loadVoices();
+    </script>
 </body>
 </html>
